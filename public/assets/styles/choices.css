@@ -2,10 +2,29 @@
 =            Choices            =
 =============================== */
 .choices {
+  --bg-color-disabled: #eaeaea;
+  --bg-color-dropdown: #fff;
+  --bg-color: #f9f9f9;
+  --border-radius-item: 20px;
+  --border-radius: 2.5px;
+  --button-dimension: 8px;
+  --button-offset: 8px;
+  --disabled-color: var(--bg-color-disabled);
+  --font-size-lg: 16px;
+  --font-size-md: 14px;
+  --font-size-sm: 12px;
+  --guttering: 24px;
+  --highlight-color: var(--primary-color);
+  --icon-cross-inverse: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+  --icon-cross: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+  --keyline-color: #ddd;
+  --primary-color: #00bcd4;
+  --text-color: #333;
+  --z-index: 1;
   position: relative;
   overflow: hidden;
-  margin-bottom: 24px;
-  font-size: 16px;
+  margin-bottom: var(--guttering);
+  font-size: var(--font-size-lg);
 }
 .choices:focus {
   outline: none;
@@ -18,7 +37,7 @@
 }
 .choices.is-disabled .choices__inner,
 .choices.is-disabled .choices__input {
-  background-color: #eaeaea;
+  background-color: var(--bg-color-disabled);
   cursor: not-allowed;
   -webkit-user-select: none;
           user-select: none;
@@ -40,12 +59,12 @@
   display: block;
   width: 100%;
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--keyline-color);
   background-color: #fff;
   margin: 0;
 }
 .choices[data-type*=select-one] .choices__button {
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+  background-image: var(--icon-cross-inverse);
   padding: 0;
   background-size: 8px;
   position: absolute;
@@ -62,7 +81,7 @@
   opacity: 1;
 }
 .choices[data-type*=select-one] .choices__button:focus {
-  box-shadow: 0 0 0 2px #00bcd4;
+  box-shadow: 0 0 0 2px var(--highlight-color);
 }
 .choices[data-type*=select-one] .choices__item[data-value=""] .choices__button {
   display: none;
@@ -72,7 +91,7 @@
   height: 0;
   width: 0;
   border-style: solid;
-  border-color: #333 transparent transparent transparent;
+  border-color: var(--text-color) transparent transparent transparent;
   border-width: 5px;
   position: absolute;
   right: 11.5px;
@@ -81,7 +100,7 @@
   pointer-events: none;
 }
 .choices[data-type*=select-one].is-open::after {
-  border-color: transparent transparent #333 transparent;
+  border-color: transparent transparent var(--text-color) transparent;
   margin-top: -7.5px;
 }
 .choices[data-type*=select-one][dir=rtl]::after {
@@ -104,14 +123,14 @@
   position: relative;
   display: inline-block;
   margin-top: 0;
-  margin-right: -4px;
+  margin-right: calc(var(--button-offset) * -0.5);
   margin-bottom: 0;
-  margin-left: 8px;
-  padding-left: 16px;
-  border-left: 1px solid #008fa1;
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
-  background-size: 8px;
-  width: 8px;
+  margin-left: var(--button-offset);
+  padding-left: calc(var(--button-offset) * 2);
+  border-left: 1px solid oklch(from var(--primary-color) calc(l - 15) c h);
+  background-image: var(--icon-cross);
+  background-size: var(--button-dimension);
+  width: var(--button-dimension);
   line-height: 1;
   opacity: 0.75;
   border-radius: 0;
@@ -126,22 +145,22 @@
   display: inline-block;
   vertical-align: top;
   width: 100%;
-  background-color: #f9f9f9;
+  background-color: var(--bg-color);
   padding: 7.5px 7.5px 3.75px;
-  border: 1px solid #ddd;
-  border-radius: 2.5px;
-  font-size: 14px;
+  border: 1px solid var(--keyline-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-md);
   min-height: 44px;
   overflow: hidden;
 }
 .is-focused .choices__inner, .is-open .choices__inner {
-  border-color: #b7b7b7;
+  border-color: oklch(from var(--keyline-color) calc(l - 12) c h);
 }
 .is-open .choices__inner {
-  border-radius: 2.5px 2.5px 0 0;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
 .is-flipped.is-open .choices__inner {
-  border-radius: 0 0 2.5px 2.5px;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 .choices__list {
@@ -168,14 +187,14 @@
 .choices__list--multiple .choices__item {
   display: inline-block;
   vertical-align: middle;
-  border-radius: 20px;
+  border-radius: var(--border-radius-item);
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   margin-right: 3.75px;
   margin-bottom: 3.75px;
-  background-color: #00bcd4;
-  border: 1px solid #00a5bb;
+  background-color: var(--primary-color);
+  border: 1px solid oklch(from var(--primary-color) calc(l - 7.5) c h);
   color: #fff;
   word-break: break-all;
   box-sizing: border-box;
@@ -188,25 +207,25 @@
   margin-left: 3.75px;
 }
 .choices__list--multiple .choices__item.is-highlighted {
-  background-color: #00a5bb;
-  border: 1px solid #008fa1;
+  background-color: oklch(from var(--primary-color) calc(l - 7.5) c h);
+  border: 1px solid oklch(from var(--primary-color) calc(l - 15) c h);
 }
 .is-disabled .choices__list--multiple .choices__item {
-  background-color: #aaaaaa;
-  border: 1px solid #919191;
+  background-color: oklch(from var(--disabled-color) calc(l - 20) c h);
+  border: 1px solid oklch(from var(--disabled-color) calc(l - 28) c h);
 }
 
 .choices__list--dropdown, .choices__list[aria-expanded] {
   visibility: hidden;
-  z-index: 1;
+  z-index: var(--z-index);
   position: absolute;
   width: 100%;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: var(--bg-color-dropdown);
+  border: 1px solid var(--keyline-color);
   top: 100%;
   margin-top: -1px;
-  border-bottom-left-radius: 2.5px;
-  border-bottom-right-radius: 2.5px;
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
   overflow: hidden;
   word-break: break-all;
   will-change: visibility;
@@ -215,7 +234,7 @@
   visibility: visible;
 }
 .is-open .choices__list--dropdown, .is-open .choices__list[aria-expanded] {
-  border-color: #b7b7b7;
+  border-color: oklch(from var(--keyline-color) calc(l - 12) c h);
 }
 .is-flipped .choices__list--dropdown, .is-flipped .choices__list[aria-expanded] {
   top: auto;
@@ -234,7 +253,7 @@
 .choices__list--dropdown .choices__item, .choices__list[aria-expanded] .choices__item {
   position: relative;
   padding: 10px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 [dir=rtl] .choices__list--dropdown .choices__item, [dir=rtl] .choices__list[aria-expanded] .choices__item {
   text-align: right;
@@ -245,7 +264,7 @@
   }
   .choices__list--dropdown .choices__item--selectable::after, .choices__list[aria-expanded] .choices__item--selectable::after {
     content: attr(data-select-text);
-    font-size: 12px;
+    font-size: var(--font-size-sm);
     opacity: 0;
     position: absolute;
     right: 10px;
@@ -286,10 +305,10 @@
 
 .choices__heading {
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   padding: 10px;
-  border-bottom: 1px solid #f7f7f7;
-  color: gray;
+  border-bottom: 1px solid oklch(from var(--keyline-color) calc(l + 8) c h);
+  color: oklch(from var(--text-color) calc(l + 46) c h);
 }
 
 .choices__button {
@@ -309,8 +328,8 @@
 .choices__input {
   display: inline-block;
   vertical-align: baseline;
-  background-color: #f9f9f9;
-  font-size: 14px;
+  background-color: var(--bg-color);
+  font-size: var(--font-size-md);
   margin-bottom: 5px;
   border: 0;
   border-radius: 0;
