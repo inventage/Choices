@@ -349,7 +349,8 @@ class Choices implements Choices {
 
     const shouldDisable =
       !this.config.addItems ||
-      this.passedElement.element.hasAttribute('disabled');
+      this.passedElement.element.hasAttribute('disabled') ||
+      this.passedElement.element.hasAttribute('readonly');
 
     if (shouldDisable) {
       this.disable();

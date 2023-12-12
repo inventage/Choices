@@ -1,4 +1,4 @@
-/*! choices.js v10.2.0 | © 2022 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v10.2.0 | © 2023 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -390,7 +390,7 @@ var Choices = /** @class */function () {
     this._store.subscribe(this._render);
     this._render();
     this._addEventListeners();
-    var shouldDisable = !this.config.addItems || this.passedElement.element.hasAttribute('disabled');
+    var shouldDisable = !this.config.addItems || this.passedElement.element.hasAttribute('disabled') || this.passedElement.element.hasAttribute('readonly');
     if (shouldDisable) {
       this.disable();
     }
