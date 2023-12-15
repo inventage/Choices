@@ -210,6 +210,8 @@
   overflow: hidden;
   word-break: break-all;
   will-change: visibility;
+  display: flex;
+  flex-direction: column;
 }
 .is-active.choices__list--dropdown, .is-active.choices__list[aria-expanded] {
   visibility: visible;
@@ -226,10 +228,10 @@
 }
 .choices__list--dropdown .choices__list, .choices__list[aria-expanded] .choices__list {
   position: relative;
-  max-height: 300px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   will-change: scroll-position;
+  flex-grow: 1;
 }
 .choices__list--dropdown .choices__item, .choices__list[aria-expanded] .choices__item {
   position: relative;

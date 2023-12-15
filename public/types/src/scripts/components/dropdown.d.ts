@@ -10,10 +10,6 @@ export default class Dropdown {
         type: PassedElementType;
         classNames: ClassNames;
     });
-    /**
-     * Bottom position of dropdown in viewport coordinates
-     */
-    get distanceFromTopWindow(): number;
     getChild(selector: string): HTMLElement | null;
     /**
      * Show dropdown to user by adding active state class

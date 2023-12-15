@@ -263,6 +263,8 @@ $choices-z-index: 1 !default;
   overflow: hidden;
   word-break: break-all;
   will-change: visibility;
+  display: flex;
+  flex-direction: column;
 
   &.is-active {
     visibility: visible;
@@ -281,10 +283,10 @@ $choices-z-index: 1 !default;
   }
   .#{$choices-selector}__list {
     position: relative;
-    max-height: 300px;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     will-change: scroll-position;
+    flex-grow: 1;
   }
   .#{$choices-selector}__item {
     position: relative;

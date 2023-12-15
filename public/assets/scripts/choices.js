@@ -387,6 +387,7 @@ var Choices = /** @class */function () {
     this._createTemplates();
     this._createElements();
     this._createStructure();
+    this._findScrollContainer();
     this._store.subscribe(this._render);
     this._render();
     this._addEventListeners();
@@ -539,7 +540,10 @@ var Choices = /** @class */function () {
     }
     requestAnimationFrame(function () {
       _this.dropdown.show();
-      _this.containerOuter.open(_this.dropdown.distanceFromTopWindow);
+      _this.containerOuter.open();
+      _this._setFlyoutPositionAndSize();
+      _this._scrollHandler = _this._createThrottledScrollHandler();
+      _this._scrollContainerElement.addEventListener('scroll', _this._scrollHandler);
       if (!preventInputFocus && _this._canSearch) {
         _this.input.focus();
       }
@@ -555,6 +559,9 @@ var Choices = /** @class */function () {
     requestAnimationFrame(function () {
       _this.dropdown.hide();
       _this.containerOuter.close();
+      if (_this._scrollHandler) {
+        _this._scrollContainerElement.removeEventListener('scroll', _this._scrollHandler);
+      }
       if (!preventInputBlur && _this._canSearch) {
         _this.input.removeActiveDescendant();
         _this.input.blur();
@@ -1336,6 +1343,7 @@ var Choices = /** @class */function () {
       }
     }
     this._canSearch = this.config.searchEnabled;
+    this._setFlyoutPositionAndSize();
   };
   Choices.prototype._onSelectKey = function (event, hasItems) {
     var ctrlKey = event.ctrlKey,
@@ -1822,14 +1830,12 @@ var Choices = /** @class */function () {
     this.containerOuter = new components_1.Container({
       element: this._getTemplate('containerOuter', this._direction, this._isSelectElement, this._isSelectOneElement, this.config.searchEnabled, this.passedElement.element.type, this.config.labelId),
       classNames: this.config.classNames,
-      type: this.passedElement.element.type,
-      position: this.config.position
+      type: this.passedElement.element.type
     });
     this.containerInner = new components_1.Container({
       element: this._getTemplate('containerInner'),
       classNames: this.config.classNames,
-      type: this.passedElement.element.type,
-      position: this.config.position
+      type: this.passedElement.element.type
     });
     this.input = new components_1.Input({
       element: this._getTemplate('input', this._placeholderValue),
@@ -2067,6 +2073,77 @@ var Choices = /** @class */function () {
     }
     return null;
   };
+  Choices.prototype._findScrollContainer = function () {
+    this._scrollContainerElement = this.containerOuter.element.closest(":where(".concat(this.config.scrollContainers.join(','), ")")) || document;
+  };
+  Choices.prototype._setFlyoutPositionAndSize = function () {
+    var optimizedDropdownHeight = this.dropdown.element.style.height;
+    // get pristine height of dropdown
+    this.dropdown.element.style.height = 'auto';
+    this.choiceList.element.style.flexGrow = '0';
+    var pristineDropdownHeight = parseInt(window.getComputedStyle(this.dropdown.element).height, 10);
+    this.choiceList.element.style.flexGrow = '1';
+    var containerOuterHeight = parseInt(window.getComputedStyle(this.containerOuter.element).height, 10);
+    // get available space and subtract safeSpace
+    var space = this._scrollContainerElement === document ? this._getSpaceInViewport() : this._getSpaceInScrollContainer();
+    var spaceAbove = space.above - this.config.dropdownMargin;
+    var spaceBelow = space.below - this.config.dropdownMargin;
+    // do nothing if containerOuter is not completely visible or dropdown is not truncated
+    var isDropdownContainerCompletelyInvisible = space.above < containerOuterHeight * -1 || space.below < containerOuterHeight * -1;
+    var isFlyoutNotTruncated = spaceAbove >= pristineDropdownHeight && spaceBelow >= pristineDropdownHeight;
+    if (isDropdownContainerCompletelyInvisible || isFlyoutNotTruncated) {
+      this.dropdown.element.style.height = optimizedDropdownHeight;
+      return;
+    }
+    // set classNames.flippedState and height
+    if (spaceAbove > spaceBelow) {
+      this.containerOuter.element.classList.add(this.containerOuter.classNames.flippedState);
+      this.dropdown.element.style.height = "".concat(Math.min(spaceAbove, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
+    } else {
+      this.containerOuter.element.classList.remove(this.containerOuter.classNames.flippedState);
+      this.dropdown.element.style.height = "".concat(Math.min(spaceBelow, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
+    }
+  };
+  // Calculate space between border box of innerNode and viewport.
+  Choices.prototype._getSpaceInViewport = function () {
+    var _a = this.containerOuter.element.getBoundingClientRect(),
+      innerTopPosition = _a.top,
+      innerHeight = _a.height;
+    return {
+      above: innerTopPosition,
+      below: window.innerHeight - (innerTopPosition + innerHeight)
+    };
+  };
+  // Calculate space between border box of innerNode and content box of outerNode.
+  Choices.prototype._getSpaceInScrollContainer = function () {
+    var scrollContainerElement = this._scrollContainerElement;
+    var _a = window.getComputedStyle(scrollContainerElement),
+      outerBorderTopWidth = _a.borderTopWidth,
+      outerBorderBottomWidth = _a.borderBottomWidth;
+    var _b = scrollContainerElement.getBoundingClientRect(),
+      outerTopPosition = _b.top,
+      outerHeight = _b.height;
+    var _c = this.containerOuter.element.getBoundingClientRect(),
+      innerTopPosition = _c.top,
+      innerHeight = _c.height;
+    return {
+      above: innerTopPosition - outerTopPosition - parseInt(outerBorderTopWidth, 10),
+      below: outerTopPosition + outerHeight - parseInt(outerBorderBottomWidth, 10) - innerTopPosition - innerHeight
+    };
+  };
+  Choices.prototype._createThrottledScrollHandler = function () {
+    var _this = this;
+    var ticking = false;
+    return function () {
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          _this._setFlyoutPositionAndSize();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+  };
   return Choices;
 }();
 exports["default"] = Choices;
@@ -2087,14 +2164,11 @@ var Container = /** @class */function () {
   function Container(_a) {
     var element = _a.element,
       type = _a.type,
-      classNames = _a.classNames,
-      position = _a.position;
+      classNames = _a.classNames;
     this.element = element;
     this.classNames = classNames;
     this.type = type;
-    this.position = position;
     this.isOpen = false;
-    this.isFlipped = false;
     this.isFocussed = false;
     this.isDisabled = false;
     this.isLoading = false;
@@ -2109,49 +2183,22 @@ var Container = /** @class */function () {
     this.element.removeEventListener('focus', this._onFocus);
     this.element.removeEventListener('blur', this._onBlur);
   };
-  /**
-   * Determine whether container should be flipped based on passed
-   * dropdown position
-   */
-  Container.prototype.shouldFlip = function (dropdownPos) {
-    if (typeof dropdownPos !== 'number') {
-      return false;
-    }
-    // If flip is enabled and the dropdown bottom position is
-    // greater than the window height flip the dropdown.
-    var shouldFlip = false;
-    if (this.position === 'auto') {
-      shouldFlip = !window.matchMedia("(min-height: ".concat(dropdownPos + 1, "px)")).matches;
-    } else if (this.position === 'top') {
-      shouldFlip = true;
-    }
-    return shouldFlip;
-  };
   Container.prototype.setActiveDescendant = function (activeDescendantID) {
     this.element.setAttribute('aria-activedescendant', activeDescendantID);
   };
   Container.prototype.removeActiveDescendant = function () {
     this.element.removeAttribute('aria-activedescendant');
   };
-  Container.prototype.open = function (dropdownPos) {
+  Container.prototype.open = function () {
     this.element.classList.add(this.classNames.openState);
     this.element.setAttribute('aria-expanded', 'true');
     this.isOpen = true;
-    if (this.shouldFlip(dropdownPos)) {
-      this.element.classList.add(this.classNames.flippedState);
-      this.isFlipped = true;
-    }
   };
   Container.prototype.close = function () {
     this.element.classList.remove(this.classNames.openState);
     this.element.setAttribute('aria-expanded', 'false');
     this.removeActiveDescendant();
     this.isOpen = false;
-    // A dropdown flips if it does not have space within the page
-    if (this.isFlipped) {
-      this.element.classList.remove(this.classNames.flippedState);
-      this.isFlipped = false;
-    }
   };
   Container.prototype.focus = function () {
     if (!this.isFocussed) {
@@ -2231,16 +2278,6 @@ var Dropdown = /** @class */function () {
     this.type = type;
     this.isActive = false;
   }
-  Object.defineProperty(Dropdown.prototype, "distanceFromTopWindow", {
-    /**
-     * Bottom position of dropdown in viewport coordinates
-     */
-    get: function () {
-      return this.element.getBoundingClientRect().bottom;
-    },
-    enumerable: false,
-    configurable: true
-  });
   Dropdown.prototype.getChild = function (selector) {
     return this.element.querySelector(selector);
   };
@@ -2888,7 +2925,6 @@ exports.DEFAULT_CONFIG = {
   searchFloor: 1,
   searchResultLimit: 4,
   searchFields: ['label', 'value'],
-  position: 'auto',
   resetScrollPosition: true,
   shouldSort: true,
   shouldSortItems: false,
@@ -2920,7 +2956,10 @@ exports.DEFAULT_CONFIG = {
   labelId: '',
   callbackOnInit: null,
   callbackOnCreateTemplates: null,
-  classNames: exports.DEFAULT_CLASSNAMES
+  classNames: exports.DEFAULT_CLASSNAMES,
+  dropdownMargin: 10,
+  dropdownMaxHeight: 300,
+  scrollContainers: ['.scrollable-region']
 };
 
 /***/ }),
@@ -3032,7 +3071,6 @@ __exportStar(__webpack_require__(837), exports);
 __exportStar(__webpack_require__(598), exports);
 __exportStar(__webpack_require__(369), exports);
 __exportStar(__webpack_require__(37), exports);
-__exportStar(__webpack_require__(47), exports);
 __exportStar(__webpack_require__(923), exports);
 __exportStar(__webpack_require__(876), exports);
 
@@ -3094,17 +3132,6 @@ Object.defineProperty(exports, "__esModule", ({
 /***/ }),
 
 /***/ 369:
-/***/ (function(__unused_webpack_module, exports) {
-
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-/***/ }),
-
-/***/ 47:
 /***/ (function(__unused_webpack_module, exports) {
 
 

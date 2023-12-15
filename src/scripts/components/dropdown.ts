@@ -25,13 +25,6 @@ export default class Dropdown {
     this.isActive = false;
   }
 
-  /**
-   * Bottom position of dropdown in viewport coordinates
-   */
-  get distanceFromTopWindow(): number {
-    return this.element.getBoundingClientRect().bottom;
-  }
-
   getChild(selector: string): HTMLElement | null {
     return this.element.querySelector(selector);
   }

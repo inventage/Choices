@@ -50,6 +50,8 @@ declare class Choices implements Choices {
     _presetOptions: Item[] | HTMLOptionElement[];
     _presetChoices: Partial<Choice>[];
     _presetItems: Item[] | string[];
+    _scrollContainerElement: Element | Document;
+    _scrollHandler: EventListener;
     constructor(element?: string | Element | HTMLInputElement | HTMLSelectElement, userConfig?: Partial<Options>);
     init(): void;
     destroy(): void;
@@ -213,6 +215,17 @@ declare class Choices implements Choices {
     _setChoiceOrItem(item: any): void;
     _findAndSelectChoiceByValue(value: string): void;
     _generatePlaceholderValue(): string | null;
+    _findScrollContainer(): void;
+    _setFlyoutPositionAndSize(): void;
+    _getSpaceInViewport(): {
+        above: number;
+        below: number;
+    };
+    _getSpaceInScrollContainer(): {
+        above: number;
+        below: number;
+    };
+    _createThrottledScrollHandler(): () => void;
 }
 export default Choices;
 //# sourceMappingURL=choices.d.ts.map

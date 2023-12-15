@@ -1,7 +1,6 @@
 import { wrap } from '../lib/utils';
 import { SELECT_ONE_TYPE } from '../constants';
 import { ClassNames } from '../interfaces/class-names';
-import { PositionOptionsType } from '../interfaces/position-options-type';
 import { PassedElementType } from '../interfaces/passed-element-type';
 
 export default class Container {
@@ -11,11 +10,7 @@ export default class Container {
 
   classNames: ClassNames;
 
-  position: PositionOptionsType;
-
   isOpen: boolean;
-
-  isFlipped: boolean;
 
   isFocussed: boolean;
 
@@ -27,19 +22,15 @@ export default class Container {
     element,
     type,
     classNames,
-    position,
   }: {
     element: HTMLElement;
     type: PassedElementType;
     classNames: ClassNames;
-    position: PositionOptionsType;
   }) {
     this.element = element;
     this.classNames = classNames;
     this.type = type;
-    this.position = position;
     this.isOpen = false;
-    this.isFlipped = false;
     this.isFocussed = false;
     this.isDisabled = false;
     this.isLoading = false;
@@ -57,28 +48,6 @@ export default class Container {
     this.element.removeEventListener('blur', this._onBlur);
   }
 
-  /**
-   * Determine whether container should be flipped based on passed
-   * dropdown position
-   */
-  shouldFlip(dropdownPos: number): boolean {
-    if (typeof dropdownPos !== 'number') {
-      return false;
-    }
-
-    // If flip is enabled and the dropdown bottom position is
-    // greater than the window height flip the dropdown.
-    let shouldFlip = false;
-    if (this.position === 'auto') {
-      shouldFlip = !window.matchMedia(`(min-height: ${dropdownPos + 1}px)`)
-        .matches;
-    } else if (this.position === 'top') {
-      shouldFlip = true;
-    }
-
-    return shouldFlip;
-  }
-
   setActiveDescendant(activeDescendantID: string): void {
     this.element.setAttribute('aria-activedescendant', activeDescendantID);
   }
@@ -87,15 +56,10 @@ export default class Container {
     this.element.removeAttribute('aria-activedescendant');
   }
 
-  open(dropdownPos: number): void {
+  open(): void {
     this.element.classList.add(this.classNames.openState);
     this.element.setAttribute('aria-expanded', 'true');
     this.isOpen = true;
-
-    if (this.shouldFlip(dropdownPos)) {
-      this.element.classList.add(this.classNames.flippedState);
-      this.isFlipped = true;
-    }
   }
 
   close(): void {
@@ -103,12 +67,6 @@ export default class Container {
     this.element.setAttribute('aria-expanded', 'false');
     this.removeActiveDescendant();
     this.isOpen = false;
-
-    // A dropdown flips if it does not have space within the page
-    if (this.isFlipped) {
-      this.element.classList.remove(this.classNames.flippedState);
-      this.isFlipped = false;
-    }
   }
 
   focus(): void {

@@ -63,7 +63,6 @@ describe('constants', () => {
         expect(DEFAULT_CONFIG.searchFloor).to.be.a('number');
         expect(DEFAULT_CONFIG.searchResultLimit).to.be.a('number');
         expect(DEFAULT_CONFIG.searchFields).to.be.an('array');
-        expect(DEFAULT_CONFIG.position).to.be.a('string');
         expect(DEFAULT_CONFIG.shouldSort).to.be.a('boolean');
         expect(DEFAULT_CONFIG.shouldSortItems).to.be.a('boolean');
         expect(DEFAULT_CONFIG.placeholder).to.be.a('boolean');
@@ -83,6 +82,9 @@ describe('constants', () => {
         expect(DEFAULT_CONFIG.fuseOptions).to.be.an('object');
         expect(DEFAULT_CONFIG.callbackOnInit).to.equal(null);
         expect(DEFAULT_CONFIG.callbackOnCreateTemplates).to.equal(null);
+        expect(DEFAULT_CONFIG.dropdownMargin).to.be.a('number');
+        expect(DEFAULT_CONFIG.dropdownMaxHeight).to.be.a('number');
+        expect(DEFAULT_CONFIG.scrollContainers).to.be.a('array');
       });
     });
 

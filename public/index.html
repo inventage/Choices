@@ -544,6 +544,93 @@
 
           <button type="reset">Reset</button>
         </form>
+
+        <hr>
+        <h2>Scroll container</h2>
+        <p>Opened dropdowns never overflow or expand a scroll container.</p>
+        <style>
+            .scrollable-region {
+                border: 1px solid grey;
+                width: 100%;
+                height: 400px;
+                overflow: auto;
+            }
+        </style>
+        <div class="scrollable-region">
+          <div style="opacity: 0.3;">
+            <p>Lorem ipsum dolor.</small></p>
+            <p>Dolor sit.</p>
+            <p>Aamet consectetur adipisicing.</p>
+            <p>Consectetur adipisicing elit.</p>
+            <p>Aadipisicing exercitationem.</p>
+            <p>Ipisicing ationem.</p>
+            <p>Autem corporis deserunt.</p>
+          </div>
+
+          <select
+            class="form-control"
+            data-trigger
+          >
+            <option>Choice 1</option>
+            <option selected>Choice 2</option>
+            <option>Choice 3</option>
+            <option>Choice 4</option>
+            <option>Choice 5</option>
+            <option>Choice 6</option>
+            <option>Choice 7</option>
+            <option disabled>Choice 8</option>
+            <option>Choice 9</option>
+            <option>Choice 10</option>
+          </select>
+
+          <select
+            class="form-control"
+            data-trigger
+          >
+            <option selected>Choice 1</option>
+            <option>Choice 2</option>
+            <option>Choice 3</option>
+            <option>Choice 4</option>
+          </select>
+
+          <select
+            class="form-control"
+            data-trigger
+            multiple
+          >
+            <option selected>Choice 1</option>
+            <option selected>Choice 2</option>
+            <option>Choice 3</option>
+            <option>Choice 4</option>
+          </select>
+
+          <select
+            class="form-control"
+            data-trigger
+            multiple
+          >
+            <option>Choice 1</option>
+            <option>Choice 2</option>
+            <option selected>Choice 3</option>
+            <option selected>Choice 4</option>
+            <option selected>Choice 5</option>
+            <option>Choice 6</option>
+            <option disabled>Choice 7</option>
+            <option>Choice 8</option>
+            <option>Choice 9</option>
+            <option>Choice 10</option>
+          </select>
+
+          <div style="opacity: 0.3;">
+            <p>Lorem ipsum dolor.</small></p>
+            <p>Dolor sit.</p>
+            <p>Aamet consectetur adipisicing.</p>
+            <p>Consectetur adipisicing elit.</p>
+            <p>Aadipisicing exercitationem.</p>
+            <p>Ipisicing ationem.</p>
+            <p>Autem corporis deserunt.</p>
+          </div>
+        </div>
       </div>
     </div>
     <script>
