@@ -2462,10 +2462,10 @@ class Choices implements Choices {
   }
 
   _setFlyoutPositionAndSize() {
-    const optimizedDropdownHeight = this.dropdown.element.style.height;
+    const optimizedDropdownHeight = this.dropdown.element.style.maxHeight;
 
     // get pristine height of dropdown
-    this.dropdown.element.style.height = 'auto';
+    this.dropdown.element.style.maxHeight = 'auto';
     this.choiceList.element.style.flexGrow = '0';
     const pristineDropdownHeight = parseInt(
       window.getComputedStyle(this.dropdown.element).height,
@@ -2493,7 +2493,7 @@ class Choices implements Choices {
     const isFlyoutNotTruncated =
       spaceAbove >= pristineDropdownHeight && spaceBelow >= pristineDropdownHeight;
     if (isDropdownContainerCompletelyInvisible || isFlyoutNotTruncated) {
-      this.dropdown.element.style.height = optimizedDropdownHeight;
+      this.dropdown.element.style.maxHeight = optimizedDropdownHeight;
       return;
     }
 
@@ -2502,7 +2502,7 @@ class Choices implements Choices {
       this.containerOuter.element.classList.add(
         this.containerOuter.classNames.flippedState,
       );
-      this.dropdown.element.style.height = `${Math.min(
+      this.dropdown.element.style.maxHeight = `${Math.min(
         spaceAbove,
         pristineDropdownHeight,
         this.config.dropdownMaxHeight,
@@ -2511,7 +2511,7 @@ class Choices implements Choices {
       this.containerOuter.element.classList.remove(
         this.containerOuter.classNames.flippedState,
       );
-      this.dropdown.element.style.height = `${Math.min(
+      this.dropdown.element.style.maxHeight = `${Math.min(
         spaceBelow,
         pristineDropdownHeight,
         this.config.dropdownMaxHeight,

@@ -1,4 +1,4 @@
-/*! choices.js v10.2.0 | © 2023 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v10.2.0 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -2077,9 +2077,9 @@ var Choices = /** @class */function () {
     this._scrollContainerElement = this.containerOuter.element.closest(":where(".concat(this.config.scrollContainers.join(','), ")")) || document;
   };
   Choices.prototype._setFlyoutPositionAndSize = function () {
-    var optimizedDropdownHeight = this.dropdown.element.style.height;
+    var optimizedDropdownHeight = this.dropdown.element.style.maxHeight;
     // get pristine height of dropdown
-    this.dropdown.element.style.height = 'auto';
+    this.dropdown.element.style.maxHeight = 'auto';
     this.choiceList.element.style.flexGrow = '0';
     var pristineDropdownHeight = parseInt(window.getComputedStyle(this.dropdown.element).height, 10);
     this.choiceList.element.style.flexGrow = '1';
@@ -2092,16 +2092,16 @@ var Choices = /** @class */function () {
     var isDropdownContainerCompletelyInvisible = space.above < containerOuterHeight * -1 || space.below < containerOuterHeight * -1;
     var isFlyoutNotTruncated = spaceAbove >= pristineDropdownHeight && spaceBelow >= pristineDropdownHeight;
     if (isDropdownContainerCompletelyInvisible || isFlyoutNotTruncated) {
-      this.dropdown.element.style.height = optimizedDropdownHeight;
+      this.dropdown.element.style.maxHeight = optimizedDropdownHeight;
       return;
     }
     // set classNames.flippedState and height
     if (spaceAbove > spaceBelow) {
       this.containerOuter.element.classList.add(this.containerOuter.classNames.flippedState);
-      this.dropdown.element.style.height = "".concat(Math.min(spaceAbove, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
+      this.dropdown.element.style.maxHeight = "".concat(Math.min(spaceAbove, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
     } else {
       this.containerOuter.element.classList.remove(this.containerOuter.classNames.flippedState);
-      this.dropdown.element.style.height = "".concat(Math.min(spaceBelow, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
+      this.dropdown.element.style.maxHeight = "".concat(Math.min(spaceBelow, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
     }
   };
   // Calculate space between border box of innerNode and viewport.
