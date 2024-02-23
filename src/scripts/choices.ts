@@ -2465,7 +2465,7 @@ class Choices implements Choices {
     const optimizedDropdownHeight = this.dropdown.element.style.maxHeight;
 
     // get pristine height of dropdown
-    this.dropdown.element.style.maxHeight = 'auto';
+    this.dropdown.element.style.maxHeight = 'unset';
     this.choiceList.element.style.flexGrow = '0';
     const pristineDropdownHeight = parseInt(
       window.getComputedStyle(this.dropdown.element).height,

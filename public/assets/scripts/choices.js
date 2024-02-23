@@ -2079,7 +2079,7 @@ var Choices = /** @class */function () {
   Choices.prototype._setFlyoutPositionAndSize = function () {
     var optimizedDropdownHeight = this.dropdown.element.style.maxHeight;
     // get pristine height of dropdown
-    this.dropdown.element.style.maxHeight = 'auto';
+    this.dropdown.element.style.maxHeight = 'unset';
     this.choiceList.element.style.flexGrow = '0';
     var pristineDropdownHeight = parseInt(window.getComputedStyle(this.dropdown.element).height, 10);
     this.choiceList.element.style.flexGrow = '1';
