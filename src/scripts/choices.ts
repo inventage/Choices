@@ -1455,14 +1455,11 @@ class Choices implements Choices {
   }
 
   _onKeyDown(event: KeyboardEvent): void {
-    const { keyCode } = event;
     const { activeItems } = this._store;
     const hasFocusedInput = this.input.isFocussed;
     const hasActiveDropdown = this.dropdown.isActive;
     const hasItems = this.itemList.hasChildren();
-    const keyString = String.fromCharCode(keyCode);
-    // eslint-disable-next-line no-control-regex
-    const wasPrintableChar = /[^\x00-\x1F]/.test(keyString);
+    const wasPrintableChar = event.key.length === 1
 
     const {
       BACK_KEY,
@@ -1480,16 +1477,11 @@ class Choices implements Choices {
       this.showDropdown();
 
       if (!this.input.isFocussed) {
-        /*
-          We update the input value with the pressed key as
-          the input was not focussed at the time of key press
-          therefore does not have the value of the key.
-        */
-        this.input.value += event.key.toLowerCase();
+        this.input.value += event.key;
       }
     }
 
-    switch (keyCode) {
+    switch (event.keyCode) {
       case A_KEY:
         return this._onSelectKey(event, hasItems);
       case ENTER_KEY:
@@ -1679,6 +1671,8 @@ class Choices implements Choices {
         }
         this._highlightChoice(nextEl);
       }
+
+      this._canSearch = this.config.searchEnabled;
 
       // Prevent default to maintain cursor position whilst
       // traversing dropdown options

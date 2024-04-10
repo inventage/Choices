@@ -1265,14 +1265,11 @@ var Choices = /** @class */function () {
     this.input.removeEventListeners();
   };
   Choices.prototype._onKeyDown = function (event) {
-    var keyCode = event.keyCode;
     var activeItems = this._store.activeItems;
     var hasFocusedInput = this.input.isFocussed;
     var hasActiveDropdown = this.dropdown.isActive;
     var hasItems = this.itemList.hasChildren();
-    var keyString = String.fromCharCode(keyCode);
-    // eslint-disable-next-line no-control-regex
-    var wasPrintableChar = /[^\x00-\x1F]/.test(keyString);
+    var wasPrintableChar = event.key.length === 1;
     var BACK_KEY = constants_1.KEY_CODES.BACK_KEY,
       DELETE_KEY = constants_1.KEY_CODES.DELETE_KEY,
       ENTER_KEY = constants_1.KEY_CODES.ENTER_KEY,
@@ -1285,15 +1282,10 @@ var Choices = /** @class */function () {
     if (!this._isTextElement && !hasActiveDropdown && wasPrintableChar) {
       this.showDropdown();
       if (!this.input.isFocussed) {
-        /*
-          We update the input value with the pressed key as
-          the input was not focussed at the time of key press
-          therefore does not have the value of the key.
-        */
-        this.input.value += event.key.toLowerCase();
+        this.input.value += event.key;
       }
     }
-    switch (keyCode) {
+    switch (event.keyCode) {
       case A_KEY:
         return this._onSelectKey(event, hasItems);
       case ENTER_KEY:
@@ -1436,6 +1428,7 @@ var Choices = /** @class */function () {
         }
         this._highlightChoice(nextEl);
       }
+      this._canSearch = this.config.searchEnabled;
       // Prevent default to maintain cursor position whilst
       // traversing dropdown options
       event.preventDefault();
