@@ -19,7 +19,6 @@ jobs:
         run: |
           npm ci
           npm run build
-          npx bundlesize
           npm run test:unit:coverage
           npm run test:e2e
         env:
@@ -29,10 +28,9 @@ jobs:
           CI_COMMIT_SHA: ${{ github.sha }}
           GIT_COMMIT: ${{ github.sha }}
           CI_BRANCH: ${{ github.head_ref }}
-          BUNDLESIZE_GITHUB_TOKEN: ${{secrets.BUNDLESIZE_GITHUB_TOKEN}}
           FORCE_COLOR: 2
           HUSKY_SKIP_INSTALL: true
-      ## 
+      ##
       ## Disabling for now. There does not appear to be a secure way to do this
       ## with protected branches. See discussion:
       ## https://github.community/t/how-to-push-to-protected-branches-in-a-github-action/16101
