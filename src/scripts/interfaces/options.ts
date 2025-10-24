@@ -322,6 +322,15 @@ export interface Options {
   searchChoices: boolean;
 
   /**
+   * Whether disabled choices should be included in search results. If `true`, disabled choices will appear in search results but still cannot be selected.
+   *
+   * **Input types affected:** select-one, select-multiple
+   *
+   * @default false
+   */
+  searchDisabledChoices: boolean;
+
+  /**
    * The minimum length a search value should be before choices are searched.
    *
    * **Input types affected:** select-one, select-multiple

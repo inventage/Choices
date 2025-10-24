@@ -58,6 +58,7 @@ export const DEFAULT_CONFIG: Options = {
   paste: true,
   searchEnabled: true,
   searchChoices: true,
+  searchDisabledChoices: false,
   searchFloor: 1,
   searchResultLimit: 4,
   searchFields: ['label', 'value'],
