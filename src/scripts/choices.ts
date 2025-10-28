@@ -219,6 +219,10 @@ class Choices {
       config.renderSelectedChoices = config.renderSelectedChoices === 'always' || isSelectOne;
     }
 
+    if (typeof config.searchRenderSelectedChoices !== 'boolean') {
+      config.searchRenderSelectedChoices = true;
+    }
+
     if (config.closeDropdownOnSelect === 'auto') {
       config.closeDropdownOnSelect = isText || isSelectOne || config.singleModeForMultiSelect;
     } else {
@@ -959,7 +963,10 @@ class Choices {
     const renderableChoices = (choices: ChoiceFull[]): ChoiceFull[] =>
       choices.filter(
         (choice) =>
-          !choice.placeholder && (isSearching ? !!choice.rank : config.renderSelectedChoices || !choice.selected),
+          !choice.placeholder &&
+          (isSearching
+            ? (config.searchRenderSelectedChoices || !choice.selected) && !!choice.rank
+            : config.renderSelectedChoices || !choice.selected),
       );
 
     const showLabel = config.appendGroupInSearch && isSearching;

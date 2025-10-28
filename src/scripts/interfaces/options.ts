@@ -472,6 +472,15 @@ export interface Options {
   renderSelectedChoices: 'auto' | 'always' | boolean;
 
   /**
+   * Whether selected choices should be removed from the list during search. By default selected choices appear in search results if they match the search query. Set to `false` to hide selected choices from search results.
+   *
+   * **Input types affected:** select-multiple
+   *
+   * @default 'auto';
+   */
+  searchRenderSelectedChoices: 'auto' | 'always' | boolean;
+
+  /**
    * The text that is shown whilst choices are being populated via AJAX.
    *
    * **Input types affected:** select-one, select-multiple

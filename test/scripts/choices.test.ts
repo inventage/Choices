@@ -47,6 +47,7 @@ describe('choices', () => {
             searchEnabled: false,
             closeDropdownOnSelect: true,
             renderSelectedChoices: false,
+            searchRenderSelectedChoices: true,
           });
         });
       });
@@ -68,6 +69,7 @@ describe('choices', () => {
             searchEnabled: false,
             closeDropdownOnSelect: true,
             renderSelectedChoices: false,
+            searchRenderSelectedChoices: true,
             ...config,
           });
         });
@@ -113,6 +115,77 @@ describe('choices', () => {
             });
 
             expect(instance.config.renderSelectedChoices).to.equal(false);
+          });
+        });
+
+        describe('passing the searchRenderSelectedChoices config option with an unexpected value', () => {
+          it('sets searchRenderSelectedChoices to true for select-multiple', () => {
+            document.body.innerHTML = `
+            <select data-choice multiple></select>
+            `;
+
+            instance = new Choices('[data-choice]', {
+              allowHTML: true,
+              searchRenderSelectedChoices: 'test' as any,
+            });
+
+            expect(instance.config.searchRenderSelectedChoices).to.equal(true);
+          });
+
+          it('sets searchRenderSelectedChoices to true for select-one', () => {
+            document.body.innerHTML = `
+            <select data-choice></select>
+            `;
+
+            instance = new Choices('[data-choice]', {
+              allowHTML: true,
+              searchRenderSelectedChoices: 'test' as any,
+            });
+
+            expect(instance.config.searchRenderSelectedChoices).to.equal(true);
+          });
+
+          it('sets searchRenderSelectedChoices to true for select-multiple', () => {
+            document.body.innerHTML = `
+            <select data-choice multiple></select>
+            `;
+
+            instance = new Choices('[data-choice]', {
+              allowHTML: true,
+              searchRenderSelectedChoices: 'test' as any,
+            });
+
+            expect(instance.config.searchRenderSelectedChoices).to.equal(true);
+          });
+        });
+
+        describe('passing the searchRenderSelectedChoices config option with "always"', () => {
+          it('sets searchRenderSelectedChoices to true', () => {
+            document.body.innerHTML = `
+            <select data-choice multiple></select>
+            `;
+
+            instance = new Choices('[data-choice]', {
+              allowHTML: true,
+              searchRenderSelectedChoices: 'always',
+            });
+
+            expect(instance.config.searchRenderSelectedChoices).to.equal(true);
+          });
+        });
+
+        describe('passing the searchRenderSelectedChoices config option with false', () => {
+          it('keeps searchRenderSelectedChoices as false', () => {
+            document.body.innerHTML = `
+            <select data-choice multiple></select>
+            `;
+
+            instance = new Choices('[data-choice]', {
+              allowHTML: true,
+              searchRenderSelectedChoices: false,
+            });
+
+            expect(instance.config.searchRenderSelectedChoices).to.equal(false);
           });
         });
       });

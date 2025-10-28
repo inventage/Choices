@@ -500,6 +500,29 @@
           </script>
         </div>
 
+        <div data-test-hook="search-hide-selected">
+          <label for="choices-search-hide-selected">Search hide selected</label>
+          <select
+            class="form-control"
+            name="choices-search-hide-selected"
+            id="choices-search-hide-selected"
+            multiple
+          >
+            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 2">Choice 2</option>
+            <option value="Choice 3">Choice 3</option>
+            <option value="Choice 4">Choice 4</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#choices-search-hide-selected', {
+                allowHTML: false,
+                searchRenderSelectedChoices: false,
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="placeholder-via-option-value">
           <label for="choices-placeholder-via-option-value"
             >Placeholder via empty option value</label

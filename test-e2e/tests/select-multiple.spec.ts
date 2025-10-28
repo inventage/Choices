@@ -651,6 +651,47 @@ describe(`Choices - select multiple`, () => {
       });
     });
 
+    describe('search hide selected', () => {
+      const testId = 'search-hide-selected';
+
+      describe('selecting choices and searching', () => {
+        test('selected choices do not appear in search results', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          await suite.getChoiceWithText('Choice 1').click();
+          await suite.expectedItemCount(1);
+
+          await suite.typeText('Choice');
+          await suite.expectVisibleDropdown();
+
+          await expect(suite.choices.filter({ hasText: 'Choice 1' })).toHaveCount(0);
+
+          await expect(suite.choices.filter({ hasText: 'Choice 2' })).toHaveCount(1);
+          await expect(suite.choices.filter({ hasText: 'Choice 3' })).toHaveCount(1);
+          await expect(suite.choices.filter({ hasText: 'Choice 4' })).toHaveCount(1);
+        });
+
+        test('selecting multiple choices hides all from search', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          await suite.getChoiceWithText('Choice 1').click();
+          await suite.getChoiceWithText('Choice 2').click();
+          await suite.expectedItemCount(2);
+
+          await suite.typeText('Choice');
+          await suite.expectVisibleDropdown();
+
+          await expect(suite.choices.filter({ hasText: 'Choice 1' })).toHaveCount(0);
+          await expect(suite.choices.filter({ hasText: 'Choice 2' })).toHaveCount(0);
+
+          await expect(suite.choices.filter({ hasText: 'Choice 3' })).toHaveCount(1);
+          await expect(suite.choices.filter({ hasText: 'Choice 4' })).toHaveCount(1);
+        });
+      });
+    });
+
     [
       {
         name: 'empty option value',
