@@ -521,6 +521,15 @@ class Choices {
       }
 
       this.passedElement.triggerEvent(EventType.showDropdown);
+
+      const activeElement = this.choiceList.element.querySelector<HTMLElement>(
+        getClassNamesSelector(this.config.classNames.selectedState),
+      );
+
+      if (activeElement !== null && !isScrolledIntoView(activeElement, this.choiceList.element)) {
+        // We use the native scrollIntoView function instead of choiceList.scrollToChildElement to avoid smooth scroll.
+        activeElement.scrollIntoView();
+      }
     });
 
     return this;
