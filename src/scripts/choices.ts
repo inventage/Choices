@@ -531,6 +531,8 @@ class Choices {
       return this;
     }
 
+    this._removeHighlightedChoices();
+
     requestAnimationFrame(() => {
       this.dropdown.hide();
       this.containerOuter.close();
@@ -2035,14 +2037,10 @@ class Choices {
     this.containerOuter.addInvalidState();
   }
 
-  _highlightChoice(el: HTMLElement | null = null): void {
-    const choices = Array.from(this.dropdown.element.querySelectorAll<HTMLElement>(selectableChoiceIdentifier));
-
-    if (!choices.length) {
-      return;
-    }
-
-    let passedEl = el;
+  /**
+   * Removes any highlighted choice options
+   */
+  _removeHighlightedChoices(): void {
     const { highlightedState } = this.config.classNames;
     const highlightedChoices = Array.from(
       this.dropdown.element.querySelectorAll<HTMLElement>(getClassNamesSelector(highlightedState)),
@@ -2053,6 +2051,19 @@ class Choices {
       removeClassesFromElement(choice, highlightedState);
       choice.setAttribute('aria-selected', 'false');
     });
+  }
+
+  _highlightChoice(el: HTMLElement | null = null): void {
+    const choices = Array.from(this.dropdown.element.querySelectorAll<HTMLElement>(selectableChoiceIdentifier));
+
+    if (!choices.length) {
+      return;
+    }
+
+    let passedEl = el;
+    const { highlightedState } = this.config.classNames;
+
+    this._removeHighlightedChoices();
 
     if (passedEl) {
       this._highlightPosition = choices.indexOf(passedEl);
