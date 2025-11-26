@@ -964,7 +964,6 @@ class Choices {
 
     const showLabel = config.appendGroupInSearch && isSearching;
     let selectableChoices = false;
-    let highlightedEl: HTMLElement | null = null;
     const renderChoices = (choices: ChoiceFull[], withinGroup: boolean): void => {
       if (isSearching) {
         // sortByRank is used to ensure stable sorting, as scores are non-unique
@@ -992,8 +991,6 @@ class Choices {
         fragment.appendChild(dropdownItem);
         if (isSearching || !choice.selected) {
           selectableChoices = true;
-        } else if (!highlightedEl) {
-          highlightedEl = dropdownItem;
         }
 
         return index < choiceLimit;
@@ -1054,8 +1051,6 @@ class Choices {
 
     this._renderNotice(fragment);
     this.choiceList.element.replaceChildren(fragment);
-
-    this._highlightChoice(highlightedEl);
   }
 
   _renderItems(): void {
