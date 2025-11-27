@@ -3668,11 +3668,6 @@
                     _this.input.focus();
                 }
                 _this.passedElement.triggerEvent(EventType.showDropdown);
-                var activeElement = _this.choiceList.element.querySelector(getClassNamesSelector(_this.config.classNames.selectedState));
-                if (activeElement !== null && !isScrolledIntoView(activeElement, _this.choiceList.element)) {
-                    // We use the native scrollIntoView function instead of choiceList.scrollToChildElement to avoid animated scroll.
-                    activeElement.scrollIntoView();
-                }
             });
             return this;
         };
@@ -3681,7 +3676,6 @@
             if (!this.dropdown.isActive) {
                 return this;
             }
-            this._removeHighlightedChoices();
             requestAnimationFrame(function () {
                 _this.dropdown.hide();
                 _this.containerOuter.close();
@@ -4254,7 +4248,7 @@
             if (!items.length || !this.config.removeItems || !this.config.removeItemButton) {
                 return;
             }
-            var id = element && parseDataSetId(element.closest('[data-id]'));
+            var id = element && parseDataSetId(element.parentElement);
             var itemToRemove = id && items.find(function (item) { return item.id === id; });
             if (!itemToRemove) {
                 return;
@@ -4834,7 +4828,7 @@
          */
         Choices.prototype._onMouseDown = function (event) {
             var target = event.target;
-            if (!(target instanceof Element)) {
+            if (!(target instanceof HTMLElement)) {
                 return;
             }
             // If we have our mouse down on the scrollbar and are on IE11...
@@ -4976,18 +4970,6 @@
         Choices.prototype._onInvalid = function () {
             this.containerOuter.addInvalidState();
         };
-        /**
-         * Removes any highlighted choice options
-         */
-        Choices.prototype._removeHighlightedChoices = function () {
-            var highlightedState = this.config.classNames.highlightedState;
-            var highlightedChoices = Array.from(this.dropdown.element.querySelectorAll(getClassNamesSelector(highlightedState)));
-            // Remove any highlighted choices
-            highlightedChoices.forEach(function (choice) {
-                removeClassesFromElement(choice, highlightedState);
-                choice.setAttribute('aria-selected', 'false');
-            });
-        };
         Choices.prototype._highlightChoice = function (el) {
             if (el === void 0) { el = null; }
             var choices = Array.from(this.dropdown.element.querySelectorAll(selectableChoiceIdentifier));
@@ -4996,7 +4978,12 @@
             }
             var passedEl = el;
             var highlightedState = this.config.classNames.highlightedState;
-            this._removeHighlightedChoices();
+            var highlightedChoices = Array.from(this.dropdown.element.querySelectorAll(getClassNamesSelector(highlightedState)));
+            // Remove any highlighted choices
+            highlightedChoices.forEach(function (choice) {
+                removeClassesFromElement(choice, highlightedState);
+                choice.setAttribute('aria-selected', 'false');
+            });
             if (passedEl) {
                 this._highlightPosition = choices.indexOf(passedEl);
             }
