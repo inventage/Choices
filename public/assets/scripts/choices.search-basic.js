@@ -3189,6 +3189,11 @@
                     _this.input.focus();
                 }
                 _this.passedElement.triggerEvent(EventType.showDropdown);
+                var activeElement = _this.choiceList.element.querySelector(getClassNamesSelector(_this.config.classNames.selectedState));
+                if (activeElement !== null && !isScrolledIntoView(activeElement, _this.choiceList.element)) {
+                    // We use the native scrollIntoView function instead of choiceList.scrollToChildElement to avoid animated scroll.
+                    activeElement.scrollIntoView();
+                }
             });
             return this;
         };
@@ -3197,6 +3202,7 @@
             if (!this.dropdown.isActive) {
                 return this;
             }
+            this._removeHighlightedChoices();
             requestAnimationFrame(function () {
                 _this.dropdown.hide();
                 _this.containerOuter.close();
@@ -3566,7 +3572,6 @@
             };
             var showLabel = config.appendGroupInSearch && isSearching;
             var selectableChoices = false;
-            var highlightedEl = null;
             var renderChoices = function (choices, withinGroup) {
                 if (isSearching) {
                     // sortByRank is used to ensure stable sorting, as scores are non-unique
@@ -3587,9 +3592,6 @@
                     fragment.appendChild(dropdownItem);
                     if (isSearching || !choice.selected) {
                         selectableChoices = true;
-                    }
-                    else if (!highlightedEl) {
-                        highlightedEl = dropdownItem;
                     }
                     return index < choiceLimit;
                 });
@@ -3638,7 +3640,6 @@
             }
             this._renderNotice(fragment);
             this.choiceList.element.replaceChildren(fragment);
-            this._highlightChoice(highlightedEl);
         };
         Choices.prototype._renderItems = function () {
             var _this = this;
@@ -3769,7 +3770,7 @@
             if (!items.length || !this.config.removeItems || !this.config.removeItemButton) {
                 return;
             }
-            var id = element && parseDataSetId(element.parentElement);
+            var id = element && parseDataSetId(element.closest('[data-id]'));
             var itemToRemove = id && items.find(function (item) { return item.id === id; });
             if (!itemToRemove) {
                 return;
@@ -4349,7 +4350,7 @@
          */
         Choices.prototype._onMouseDown = function (event) {
             var target = event.target;
-            if (!(target instanceof HTMLElement)) {
+            if (!(target instanceof Element)) {
                 return;
             }
             // If we have our mouse down on the scrollbar and are on IE11...
@@ -4491,6 +4492,18 @@
         Choices.prototype._onInvalid = function () {
             this.containerOuter.addInvalidState();
         };
+        /**
+         * Removes any highlighted choice options
+         */
+        Choices.prototype._removeHighlightedChoices = function () {
+            var highlightedState = this.config.classNames.highlightedState;
+            var highlightedChoices = Array.from(this.dropdown.element.querySelectorAll(getClassNamesSelector(highlightedState)));
+            // Remove any highlighted choices
+            highlightedChoices.forEach(function (choice) {
+                removeClassesFromElement(choice, highlightedState);
+                choice.setAttribute('aria-selected', 'false');
+            });
+        };
         Choices.prototype._highlightChoice = function (el) {
             if (el === void 0) { el = null; }
             var choices = Array.from(this.dropdown.element.querySelectorAll(selectableChoiceIdentifier));
@@ -4499,12 +4512,7 @@
             }
             var passedEl = el;
             var highlightedState = this.config.classNames.highlightedState;
-            var highlightedChoices = Array.from(this.dropdown.element.querySelectorAll(getClassNamesSelector(highlightedState)));
-            // Remove any highlighted choices
-            highlightedChoices.forEach(function (choice) {
-                removeClassesFromElement(choice, highlightedState);
-                choice.setAttribute('aria-selected', 'false');
-            });
+            this._removeHighlightedChoices();
             if (passedEl) {
                 this._highlightPosition = choices.indexOf(passedEl);
             }
