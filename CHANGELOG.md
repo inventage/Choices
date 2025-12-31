@@ -11,7 +11,6 @@
 - Add additional SCSS variables [#1304](https://github.com/Choices-js/Choices/pull/1304)
 - Add CSS custom properties support (+ dark mode for the intro page) (#1335](https://github.com/Choices-js/Choices/pull/1335)
 - Soften constraints on remove buttons [#1338](https://github.com/Choices-js/Choices/pull/1338)
-- Add support for required html attribute [#1332](https://github.com/Choices-js/Choices/pull/1332)
 
 ### Bugfixes
 - Fix data-label-description from source html was not treated as trusted [#1365](https://github.com/Choices-js/Choices/pull/1365)
