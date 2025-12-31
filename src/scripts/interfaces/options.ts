@@ -481,6 +481,15 @@ export interface Options {
   renderSelectedChoices: 'auto' | 'always' | boolean;
 
   /**
+   * Whether selected choices should be removed from the list during search.
+   *
+   * **Input types affected:** select-multiple
+   *
+   * @default false;
+   */
+  searchRenderSelectedChoices: boolean;
+
+  /**
    * The text that is shown whilst choices are being populated via AJAX.
    *
    * **Input types affected:** select-one, select-multiple

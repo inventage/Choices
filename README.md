@@ -177,6 +177,7 @@ import "choices.js/public/assets/styles/choices.css";
     prependValue: null,
     appendValue: null,
     renderSelectedChoices: 'auto',
+    searchRenderSelectedChoices: true,
     loadingText: 'Loading...',
     noResultsText: 'No results found',
     noChoicesText: 'No choices to choose from',
@@ -670,6 +671,23 @@ For backward compatibility, `<option value="">This is a placeholder</option>` an
 **Input types affected:** `select-multiple`
 
 **Usage:** Whether selected choices should be removed from the list. By default choices are removed when they are selected in multiple select box. To always render choices pass `always`.
+
+### searchRenderSelectedChoices
+
+**Type:** `Boolean` **Default:** `true'`
+
+**Input types affected:** `select-multiple`
+
+**Usage:** Whether selected choices should be removed from the list during search.
+
+**Example:**
+
+```js
+// Hide selected choices from search results
+const example = new Choices(element, {
+  searchRenderSelectedChoices: false,
+});
+```
 
 ### loadingText
 

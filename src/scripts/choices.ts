@@ -970,7 +970,10 @@ class Choices {
     const renderableChoices = (choices: ChoiceFull[]): ChoiceFull[] =>
       choices.filter(
         (choice) =>
-          !choice.placeholder && (isSearching ? !!choice.rank : config.renderSelectedChoices || !choice.selected),
+          !choice.placeholder &&
+          (isSearching
+            ? (config.searchRenderSelectedChoices || !choice.selected) && !!choice.rank
+            : config.renderSelectedChoices || !choice.selected),
       );
 
     const showLabel = config.appendGroupInSearch && isSearching;
