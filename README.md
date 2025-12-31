@@ -161,6 +161,7 @@ import "choices.js/public/assets/styles/choices.css";
     paste: true,
     searchEnabled: true,
     searchChoices: true,
+    searchDisabledChoices: false,
     searchFloor: 1,
     searchResultLimit: 4,
     searchFields: ['label', 'value'],
@@ -482,6 +483,14 @@ Pass an array of objects:
 **Input types affected:** `select-one`
 
 **Usage:** Whether choices should be filtered by input or not. If `false`, the search event will still emit, but choices will not be filtered.
+
+### searchDisabledChoices
+
+**Type:** `Boolean` **Default:** `false`
+
+**Input types affected:** `select-one`, `select-multiple`
+
+**Usage:** Whether disabled choices should be included in search results. If `true`, disabled choices will appear in search results but still cannot be selected. This is useful when you want users to see what options exist but are currently unavailable. Placeholders are always excluded from search results regardless of this setting.
 
 ### searchFields
 
