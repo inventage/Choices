@@ -595,7 +595,6 @@ describe(`Choices - select multiple`, () => {
       });
     });
 
-    /*
     describe('search disabled', () => {
       const testId = 'search-disabled';
       test('does not display a search input', async ({ page, bundle }) => {
@@ -616,10 +615,9 @@ describe(`Choices - select multiple`, () => {
 
         await suite.expectedItemCount(1);
         await suite.expectedValue(text);
-        await suite.expectHiddenDropdown();
+        await suite.expectVisibleDropdown();
       });
     });
-    */
 
     describe('search floor', () => {
       const testId = 'search-floor';
