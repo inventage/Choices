@@ -852,8 +852,11 @@ const example = new Choices(element, {
 or more complex:
 
 ```js
+// StrToEl = (str: string) => HTMLElement | HTMLInputElement | HTMLOptionElement;
+// EscapeForTemplateFn = (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string;
+// GetClassNamesFn = (s: string | Array<string>) => string;
 const example = new Choices(element, {
-  callbackOnCreateTemplates: function(strToEl, escapeForTemplate, getClassNames) {
+  callbackOnCreateTemplates: function(strToEl /*:StrToEl*/, escapeForTemplate /*:EscapeForTemplateFn*/, getClassNames /*:GetClassNamesFn*/) {
     return {
       item: ({ classNames }, data) => {
         return strToEl(`
@@ -863,10 +866,10 @@ const example = new Choices(element, {
             : classNames.itemSelectable).join(' ')
         } ${
           data.placeholder ? classNames.placeholder : ''
-        }" data-item data-id="${data.id}" data-value="${escapeForTemplate(data.value)}" ${
+        }" data-item data-id="${data.id}" data-value="${escapeForTemplate(true, data.value)}" ${
           data.active ? 'aria-selected="true"' : ''
         } ${data.disabled ? 'aria-disabled="true"' : ''}>
-            <span>&bigstar;</span> ${escapeForTemplate(data.label)}
+            <span>&bigstar;</span> ${escapeForTemplate(true, data.label)}
           </div>
         `);
       },
@@ -878,10 +881,10 @@ const example = new Choices(element, {
           data.disabled
             ? 'data-choice-disabled aria-disabled="true"'
             : 'data-choice-selectable'
-        } data-id="${data.id}" data-value="${escapeForTemplate(data.value)}" ${
+        } data-id="${data.id}" data-value="${escapeForTemplate(true, data.value)}" ${
           data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
         }>
-            <span>&bigstar;</span> ${escapeForTemplate(data.label)}
+            <span>&bigstar;</span> ${escapeForTemplate(true, data.label)}
           </div>
         `);
       },
