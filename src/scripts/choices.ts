@@ -219,10 +219,6 @@ class Choices {
       config.renderSelectedChoices = config.renderSelectedChoices === 'always' || isSelectOne;
     }
 
-    if (typeof config.searchRenderSelectedChoices !== 'boolean') {
-      config.searchRenderSelectedChoices = true;
-    }
-
     if (config.closeDropdownOnSelect === 'auto') {
       config.closeDropdownOnSelect = isText || isSelectOne || config.singleModeForMultiSelect;
     } else {

@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### Features
-- Add `searchRenderSelectedChoices` configuration option to control whether selected choices appear in search results for select-multiple inputs. Defaults to `'auto'` (backward compatible behavior). Set to `false` to hide selected choices from search results.
+- Add `searchRenderSelectedChoices` configuration option to control whether selected choices appear in search results for select-multiple inputs. Defaults to `true` (backward compatible behavior). Set to `false` to hide selected choices from search results.
 
 ## [11.2.0]
 

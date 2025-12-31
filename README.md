@@ -176,7 +176,7 @@ import "choices.js/public/assets/styles/choices.css";
     prependValue: null,
     appendValue: null,
     renderSelectedChoices: 'auto',
-    searchRenderSelectedChoices: 'auto',
+    searchRenderSelectedChoices: true,
     loadingText: 'Loading...',
     noResultsText: 'No results found',
     noChoicesText: 'No choices to choose from',
@@ -665,11 +665,11 @@ For backward compatibility, `<option value="">This is a placeholder</option>` an
 
 ### searchRenderSelectedChoices
 
-**Type:** `'auto' | 'always' | Boolean` **Default:** `'auto'`
+**Type:** `Boolean` **Default:** `true'`
 
 **Input types affected:** `select-multiple`
 
-**Usage:** Whether selected choices should be removed from the list during search. By default (`'auto'`), selected choices appear in search results if they match the search query. Set to `false` to hide selected choices from search results, or `'always'` to always show them in search results.
+**Usage:** Whether selected choices should be removed from the list during search.
 
 **Example:**
 
