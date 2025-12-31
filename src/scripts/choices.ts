@@ -521,6 +521,15 @@ class Choices {
       }
 
       this.passedElement.triggerEvent(EventType.showDropdown);
+
+      const activeElement = this.choiceList.element.querySelector<HTMLElement>(
+        getClassNamesSelector(this.config.classNames.selectedState),
+      );
+
+      if (activeElement !== null && !isScrolledIntoView(activeElement, this.choiceList.element)) {
+        // We use the native scrollIntoView function instead of choiceList.scrollToChildElement to avoid animated scroll.
+        activeElement.scrollIntoView();
+      }
     });
 
     return this;
@@ -530,6 +539,8 @@ class Choices {
     if (!this.dropdown.isActive) {
       return this;
     }
+
+    this._removeHighlightedChoices();
 
     requestAnimationFrame(() => {
       this.dropdown.hide();
@@ -2040,14 +2051,10 @@ class Choices {
     this.containerOuter.addInvalidState();
   }
 
-  _highlightChoice(el: HTMLElement | null = null): void {
-    const choices = Array.from(this.dropdown.element.querySelectorAll<HTMLElement>(selectableChoiceIdentifier));
-
-    if (!choices.length) {
-      return;
-    }
-
-    let passedEl = el;
+  /**
+   * Removes any highlighted choice options
+   */
+  _removeHighlightedChoices(): void {
     const { highlightedState } = this.config.classNames;
     const highlightedChoices = Array.from(
       this.dropdown.element.querySelectorAll<HTMLElement>(getClassNamesSelector(highlightedState)),
@@ -2058,6 +2065,19 @@ class Choices {
       removeClassesFromElement(choice, highlightedState);
       choice.setAttribute('aria-selected', 'false');
     });
+  }
+
+  _highlightChoice(el: HTMLElement | null = null): void {
+    const choices = Array.from(this.dropdown.element.querySelectorAll<HTMLElement>(selectableChoiceIdentifier));
+
+    if (!choices.length) {
+      return;
+    }
+
+    let passedEl = el;
+    const { highlightedState } = this.config.classNames;
+
+    this._removeHighlightedChoices();
 
     if (passedEl) {
       this._highlightPosition = choices.indexOf(passedEl);
