@@ -98,7 +98,7 @@ describe('choices', () => {
                 searchEnabled: false,
               });
 
-              expect(instance.config.searchEnabled).to.equal(true);
+              expect(instance.config.searchEnabled).to.equal(false);
             });
           });
         });

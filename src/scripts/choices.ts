@@ -260,7 +260,7 @@ class Choices {
 
     this._store = new Store(config);
     this._currentValue = '';
-    config.searchEnabled = (!isText && config.searchEnabled) || isSelectMultiple;
+    config.searchEnabled = !isText && config.searchEnabled;
     this._canSearch = config.searchEnabled;
     this._isScrollingOnIe = false;
     this._highlightPosition = 0;
@@ -2288,24 +2288,24 @@ class Choices {
     // Wrapper inner container with outer container
     containerOuter.wrap(containerInner.element);
 
-    if (this._isSelectOneElement) {
-      this.input.placeholder = this.config.searchPlaceholderValue || '';
-    } else {
-      if (this._placeholderValue) {
-        this.input.placeholder = this._placeholderValue;
-      }
-      this.input.setWidth();
-    }
-
     containerOuter.element.appendChild(containerInner.element);
     containerOuter.element.appendChild(dropdownElement);
     containerInner.element.appendChild(this.itemList.element);
     dropdownElement.appendChild(this.choiceList.element);
 
-    if (!this._isSelectOneElement) {
-      containerInner.element.appendChild(this.input.element);
-    } else if (this.config.searchEnabled) {
-      dropdownElement.insertBefore(this.input.element, dropdownElement.firstChild);
+    if (this._isSelectOneElement) {
+      this.input.placeholder = this.config.searchPlaceholderValue || '';
+      if (this.config.searchEnabled) {
+        dropdownElement.insertBefore(this.input.element, dropdownElement.firstChild);
+      }
+    } else {
+      if (!this._isSelectMultipleElement || this.config.searchEnabled) {
+        containerInner.element.appendChild(this.input.element);
+      }
+      if (this._placeholderValue) {
+        this.input.placeholder = this._placeholderValue;
+      }
+      this.input.setWidth();
     }
 
     this._highlightPosition = 0;

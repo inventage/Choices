@@ -19,8 +19,9 @@
 - Define `[aria-selected]` for selectable choices per WAI-ARIA 1.2 spec, and avoid triple state with aria-selected [#1330](https://github.com/Choices-js/Choices/pull/1330)
 - Fix `appendGroupInSearch` option was non-functional [#1324](https://github.com/Choices-js/Choices/pull/1324)
 - When resolving the remove item/label/icon, add a 3rd argument item argument. Update default remove item label to use this (Fixes #1296) [#1323](https://github.com/Choices-js/Choices/pull/1323)
-- Fix `searchResultLimit` could not be set to -1 when renderChoiceLimit was set [#1322](https://github.com/Choices-js/Choices/pull/1322)
+- Fix `searchResultLimit` could not be set to `-1` when `renderChoiceLimit` was set [#1322](https://github.com/Choices-js/Choices/pull/1322)
 - Fix dropdown would stick closed when a search loses focus [#1308](https://github.com/Choices-js/Choices/pull/1308)
+- Fix `searchEnabled` being disabled for `select-multiple` did not work [#1366](https://github.com/Choices-js/Choices/pull/1366)
 
 ### Chore
 - Update callback argument documentation
