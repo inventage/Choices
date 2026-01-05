@@ -1,6 +1,6 @@
 # Changelog
 
-## [11.2.0]
+## [11.2.0] (2026-01-05)
 
 ### Features
 - Add `searchRenderSelectedChoices` configuration option to control whether selected choices appear in search results for select-multiple inputs. Defaults to `true` (backward compatible behavior). Set to `false` to hide selected choices from search results.
