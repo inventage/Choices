@@ -1918,6 +1918,7 @@ var Choices = /** @class */ (function () {
         this._createElements();
         this._createStructure();
         if ((this._isTextElement && !this.config.addItems) ||
+            this.passedElement.element.hasAttribute('readonly') ||
             this.passedElement.element.hasAttribute('disabled') ||
             !!this.passedElement.element.closest('fieldset:disabled')) {
             this.disable();
