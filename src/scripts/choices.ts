@@ -2430,10 +2430,10 @@ class Choices {
   }
 
   _setFlyoutPositionAndSize() {
-    const optimizedDropdownHeight = this.dropdown.element.style.height;
+    const optimizedDropdownHeight = this.dropdown.element.style.maxHeight;
 
     // get pristine height of dropdown
-    this.dropdown.element.style.height = 'auto';
+    this.dropdown.element.style.maxHeight = 'unset';
     this.choiceList.element.style.flexGrow = '0';
     const pristineDropdownHeight = parseInt(
       window.getComputedStyle(this.dropdown.element).height,
@@ -2461,7 +2461,7 @@ class Choices {
     const isFlyoutNotTruncated =
       spaceAbove >= pristineDropdownHeight && spaceBelow >= pristineDropdownHeight;
     if (isDropdownContainerCompletelyInvisible || isFlyoutNotTruncated) {
-      this.dropdown.element.style.height = optimizedDropdownHeight;
+      this.dropdown.element.style.maxHeight = optimizedDropdownHeight;
       return;
     }
 
@@ -2472,14 +2472,14 @@ class Choices {
     // set classNames.flippedState and height
     if (spaceAbove > spaceBelow) {
       this.containerOuter.element.classList.add(flippedState);
-      this.dropdown.element.style.height = `${Math.min(
+      this.dropdown.element.style.maxHeight = `${Math.min(
         spaceAbove,
         pristineDropdownHeight,
         this.config.dropdownMaxHeight,
       )}px`;
     } else {
       this.containerOuter.element.classList.remove(flippedState);
-      this.dropdown.element.style.height = `${Math.min(
+      this.dropdown.element.style.maxHeight = `${Math.min(
         spaceBelow,
         pristineDropdownHeight,
         this.config.dropdownMaxHeight,
