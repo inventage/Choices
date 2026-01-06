@@ -366,59 +366,30 @@
 
     var Container = /** @class */ (function () {
         function Container(_a) {
-            var element = _a.element, type = _a.type, classNames = _a.classNames, position = _a.position;
+            var element = _a.element, type = _a.type, classNames = _a.classNames;
             this.element = element;
             this.classNames = classNames;
             this.type = type;
-            this.position = position;
             this.isOpen = false;
-            this.isFlipped = false;
             this.isDisabled = false;
             this.isLoading = false;
         }
-        /**
-         * Determine whether container should be flipped based on passed
-         * dropdown position
-         */
-        Container.prototype.shouldFlip = function (dropdownPos, dropdownHeight) {
-            // If flip is enabled and the dropdown bottom position is
-            // greater than the window height flip the dropdown.
-            var shouldFlip = false;
-            if (this.position === 'auto') {
-                shouldFlip =
-                    this.element.getBoundingClientRect().top - dropdownHeight >= 0 &&
-                        !window.matchMedia("(min-height: ".concat(dropdownPos + 1, "px)")).matches;
-            }
-            else if (this.position === 'top') {
-                shouldFlip = true;
-            }
-            return shouldFlip;
-        };
         Container.prototype.setActiveDescendant = function (activeDescendantID) {
             this.element.setAttribute('aria-activedescendant', activeDescendantID);
         };
         Container.prototype.removeActiveDescendant = function () {
             this.element.removeAttribute('aria-activedescendant');
         };
-        Container.prototype.open = function (dropdownPos, dropdownHeight) {
+        Container.prototype.open = function () {
             addClassesToElement(this.element, this.classNames.openState);
             this.element.setAttribute('aria-expanded', 'true');
             this.isOpen = true;
-            if (this.shouldFlip(dropdownPos, dropdownHeight)) {
-                addClassesToElement(this.element, this.classNames.flippedState);
-                this.isFlipped = true;
-            }
         };
         Container.prototype.close = function () {
             removeClassesFromElement(this.element, this.classNames.openState);
             this.element.setAttribute('aria-expanded', 'false');
             this.removeActiveDescendant();
             this.isOpen = false;
-            // A dropdown flips if it does not have space within the page
-            if (this.isFlipped) {
-                removeClassesFromElement(this.element, this.classNames.flippedState);
-                this.isFlipped = false;
-            }
         };
         Container.prototype.addFocusState = function () {
             addClassesToElement(this.element, this.classNames.focusState);
@@ -977,7 +948,6 @@
         searchFloor: 1,
         searchResultLimit: 4,
         searchFields: ['label', 'value'],
-        position: 'auto',
         resetScrollPosition: true,
         shouldSort: true,
         shouldSortItems: false,
@@ -1011,6 +981,9 @@
         callbackOnCreateTemplates: null,
         classNames: DEFAULT_CLASSNAMES,
         appendGroupInSearch: false,
+        dropdownMargin: 10,
+        dropdownMaxHeight: 300,
+        scrollContainers: ['.scrollable-region'],
     };
 
     var removeItem = function (item) {
@@ -1923,6 +1896,7 @@
             this._createTemplates();
             this._createElements();
             this._createStructure();
+            this._findScrollContainer();
             if ((this._isTextElement && !this.config.addItems) ||
                 this.passedElement.element.hasAttribute('readonly') ||
                 this.passedElement.element.hasAttribute('disabled') ||
@@ -2076,8 +2050,10 @@
             }
             requestAnimationFrame(function () {
                 _this.dropdown.show();
-                var rect = _this.dropdown.element.getBoundingClientRect();
-                _this.containerOuter.open(rect.bottom, rect.height);
+                _this.containerOuter.open();
+                _this._setFlyoutPositionAndSize();
+                _this._scrollHandler = _this._createThrottledScrollHandler();
+                _this._scrollContainerElement.addEventListener('scroll', _this._scrollHandler);
                 if (!preventInputFocus) {
                     _this.input.focus();
                 }
@@ -2099,6 +2075,9 @@
             requestAnimationFrame(function () {
                 _this.dropdown.hide();
                 _this.containerOuter.close();
+                if (_this._scrollHandler) {
+                    _this._scrollContainerElement.removeEventListener('scroll', _this._scrollHandler);
+                }
                 if (!preventInputBlur && _this._canSearch) {
                     _this.input.removeActiveDescendant();
                     _this.input.blur();
@@ -3080,6 +3059,7 @@
         };
         Choices.prototype._onKeyUp = function ( /* event: KeyboardEvent */) {
             this._canSearch = this.config.searchEnabled;
+            this._setFlyoutPositionAndSize();
         };
         Choices.prototype._onInput = function ( /* event: InputEvent */) {
             var value = this.input.value;
@@ -3544,19 +3524,17 @@
         Choices.prototype._createElements = function () {
             var templating = this._templates;
             var _a = this, config = _a.config, isSelectOneElement = _a._isSelectOneElement;
-            var position = config.position, classNames = config.classNames;
+            var classNames = config.classNames;
             var elementType = this._elementType;
             this.containerOuter = new Container({
                 element: templating.containerOuter(config, this._direction, this._isSelectElement, isSelectOneElement, config.searchEnabled, elementType, config.labelId),
                 classNames: classNames,
                 type: elementType,
-                position: position,
             });
             this.containerInner = new Container({
                 element: templating.containerInner(config),
                 classNames: classNames,
                 type: elementType,
-                position: position,
             });
             this.input = new Input({
                 element: templating.input(config, this._placeholderValue),
@@ -3684,6 +3662,80 @@
             else if (!this.initialisedOK) {
                 throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
             }
+        };
+        Choices.prototype._findScrollContainer = function () {
+            this._scrollContainerElement =
+                this.containerOuter.element.closest(":where(".concat(this.config.scrollContainers.join(','), ")")) || document;
+        };
+        Choices.prototype._setFlyoutPositionAndSize = function () {
+            var optimizedDropdownHeight = this.dropdown.element.style.height;
+            // get pristine height of dropdown
+            this.dropdown.element.style.height = 'auto';
+            this.choiceList.element.style.flexGrow = '0';
+            var pristineDropdownHeight = parseInt(window.getComputedStyle(this.dropdown.element).height, 10);
+            this.choiceList.element.style.flexGrow = '1';
+            var containerOuterHeight = parseInt(window.getComputedStyle(this.containerOuter.element).height, 10);
+            // get available space and subtract safeSpace
+            var space = this._scrollContainerElement === document
+                ? this._getSpaceInViewport()
+                : this._getSpaceInScrollContainer();
+            var spaceAbove = space.above - this.config.dropdownMargin;
+            var spaceBelow = space.below - this.config.dropdownMargin;
+            // do nothing if containerOuter is not completely visible or dropdown is not truncated
+            var isDropdownContainerCompletelyInvisible = space.above < containerOuterHeight * -1 || space.below < containerOuterHeight * -1;
+            var isFlyoutNotTruncated = spaceAbove >= pristineDropdownHeight && spaceBelow >= pristineDropdownHeight;
+            if (isDropdownContainerCompletelyInvisible || isFlyoutNotTruncated) {
+                this.dropdown.element.style.height = optimizedDropdownHeight;
+                return;
+            }
+            var flippedState = Array.isArray(this.containerOuter.classNames.flippedState)
+                ? this.containerOuter.classNames.flippedState[0]
+                : this.containerOuter.classNames.flippedState;
+            // set classNames.flippedState and height
+            if (spaceAbove > spaceBelow) {
+                this.containerOuter.element.classList.add(flippedState);
+                this.dropdown.element.style.height = "".concat(Math.min(spaceAbove, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
+            }
+            else {
+                this.containerOuter.element.classList.remove(flippedState);
+                this.dropdown.element.style.height = "".concat(Math.min(spaceBelow, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
+            }
+        };
+        // Calculate space between border box of innerNode and viewport.
+        Choices.prototype._getSpaceInViewport = function () {
+            var _a = this.containerOuter.element.getBoundingClientRect(), innerTopPosition = _a.top, innerHeight = _a.height;
+            return {
+                above: innerTopPosition,
+                below: window.innerHeight - (innerTopPosition + innerHeight),
+            };
+        };
+        // Calculate space between border box of innerNode and content box of outerNode.
+        Choices.prototype._getSpaceInScrollContainer = function () {
+            var scrollContainerElement = this._scrollContainerElement;
+            var _a = window.getComputedStyle(scrollContainerElement), outerBorderTopWidth = _a.borderTopWidth, outerBorderBottomWidth = _a.borderBottomWidth;
+            var _b = scrollContainerElement.getBoundingClientRect(), outerTopPosition = _b.top, outerHeight = _b.height;
+            var _c = this.containerOuter.element.getBoundingClientRect(), innerTopPosition = _c.top, innerHeight = _c.height;
+            return {
+                above: innerTopPosition - outerTopPosition - parseInt(outerBorderTopWidth, 10),
+                below: outerTopPosition +
+                    outerHeight -
+                    parseInt(outerBorderBottomWidth, 10) -
+                    innerTopPosition -
+                    innerHeight,
+            };
+        };
+        Choices.prototype._createThrottledScrollHandler = function () {
+            var _this = this;
+            var ticking = false;
+            return function () {
+                if (!ticking) {
+                    window.requestAnimationFrame(function () {
+                        _this._setFlyoutPositionAndSize();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            };
         };
         Choices.version = '11.2.0';
         return Choices;

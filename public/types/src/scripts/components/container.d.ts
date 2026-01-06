@@ -1,29 +1,20 @@
 import { ClassNames } from '../interfaces/class-names';
-import { PositionOptionsType } from '../interfaces/position-options-type';
 import { PassedElementType } from '../interfaces/passed-element-type';
 export default class Container {
     element: HTMLElement;
     type: PassedElementType;
     classNames: ClassNames;
-    position: PositionOptionsType;
     isOpen: boolean;
-    isFlipped: boolean;
     isDisabled: boolean;
     isLoading: boolean;
-    constructor({ element, type, classNames, position, }: {
+    constructor({ element, type, classNames, }: {
         element: HTMLElement;
         type: PassedElementType;
         classNames: ClassNames;
-        position: PositionOptionsType;
     });
-    /**
-     * Determine whether container should be flipped based on passed
-     * dropdown position
-     */
-    shouldFlip(dropdownPos: number, dropdownHeight: number): boolean;
     setActiveDescendant(activeDescendantID: string): void;
     removeActiveDescendant(): void;
-    open(dropdownPos: number, dropdownHeight: number): void;
+    open(): void;
     close(): void;
     addFocusState(): void;
     removeFocusState(): void;

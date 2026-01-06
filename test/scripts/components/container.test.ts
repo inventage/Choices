@@ -15,7 +15,6 @@ describe('components/container', () => {
     instance = new Container({
       element: document.getElementById('container') as HTMLElement,
       classNames: DEFAULT_CLASSNAMES,
-      position: 'auto',
       type: 'text',
     });
   });
@@ -33,30 +32,6 @@ describe('components/container', () => {
 
     it('assigns classnames to class', () => {
       expect(instance.classNames).to.deep.equal(DEFAULT_CLASSNAMES);
-    });
-  });
-
-  describe('shouldFlip', () => {
-    describe('passing dropdownPos', () => {
-      describe('position config option set to "top"', () => {
-        beforeEach(() => {
-          instance.position = 'top';
-        });
-
-        it('returns true', () => {
-          expect(instance.shouldFlip(100, 100)).to.equal(true);
-        });
-      });
-
-      describe('position config option set to "bottom"', () => {
-        beforeEach(() => {
-          instance.position = 'bottom';
-        });
-
-        it('returns false', () => {
-          expect(instance.shouldFlip(100, 100)).to.equal(false);
-        });
-      });
     });
   });
 
@@ -95,28 +70,6 @@ describe('components/container', () => {
     it('sets isOpen flag to true', () => {
       expect(instance.isOpen).to.equal(true);
     });
-
-    describe('flipping dropdown', () => {
-      let shouldFlipStub;
-      beforeEach(() => {
-        shouldFlipStub = stub().returns(true);
-
-        instance.shouldFlip = shouldFlipStub;
-        instance.open();
-      });
-
-      afterEach(() => {
-        instance.shouldFlip.reset();
-      });
-
-      it('adds adds flipped state class', () => {
-        expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.flippedState)).to.equal(true);
-      });
-
-      it('sets isFlipped flag to true', () => {
-        expect(instance.isFlipped).to.equal(true);
-      });
-    });
   });
 
   describe('close', () => {
@@ -134,21 +87,6 @@ describe('components/container', () => {
 
     it('sets isOpen flag to true', () => {
       expect(instance.isOpen).to.equal(false);
-    });
-
-    describe('flipped dropdown', () => {
-      beforeEach(() => {
-        instance.isFlipped = true;
-        instance.close();
-      });
-
-      it('removes adds flipped state class', () => {
-        expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.flippedState)).to.equal(false);
-      });
-
-      it('sets isFlipped flag to false', () => {
-        expect(instance.isFlipped).to.equal(false);
-      });
     });
   });
 

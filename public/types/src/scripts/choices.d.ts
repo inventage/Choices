@@ -62,6 +62,8 @@ declare class Choices {
         text: string;
     };
     _docRoot: ShadowRoot | HTMLElement;
+    _scrollContainerElement: Element | Document;
+    _scrollHandler: EventListener;
     constructor(element?: string | Element | HTMLInputElement | HTMLSelectElement, userConfig?: Partial<Options>);
     init(): void;
     destroy(): void;
@@ -217,5 +219,16 @@ declare class Choices {
     _findAndSelectChoiceByValue(value: string, userTriggered?: boolean): boolean;
     _generatePlaceholderValue(): string | null;
     _warnChoicesInitFailed(caller: string): void;
+    _findScrollContainer(): void;
+    _setFlyoutPositionAndSize(): void;
+    _getSpaceInViewport(): {
+        above: number;
+        below: number;
+    };
+    _getSpaceInScrollContainer(): {
+        above: number;
+        below: number;
+    };
+    _createThrottledScrollHandler(): () => void;
 }
 export default Choices;

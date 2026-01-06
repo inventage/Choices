@@ -158,6 +158,10 @@ class Choices {
 
   _docRoot: ShadowRoot | HTMLElement;
 
+  _scrollContainerElement: Element | Document;
+
+  _scrollHandler: EventListener;
+
   constructor(
     element: string | Element | HTMLInputElement | HTMLSelectElement = '[data-choice]',
     userConfig: Partial<Options> = {},
@@ -335,6 +339,7 @@ class Choices {
     this._createTemplates();
     this._createElements();
     this._createStructure();
+    this._findScrollContainer();
 
     if (
       (this._isTextElement && !this.config.addItems) ||
@@ -514,8 +519,11 @@ class Choices {
 
     requestAnimationFrame(() => {
       this.dropdown.show();
-      const rect = this.dropdown.element.getBoundingClientRect();
-      this.containerOuter.open(rect.bottom, rect.height);
+      this.containerOuter.open();
+
+      this._setFlyoutPositionAndSize();
+      this._scrollHandler = this._createThrottledScrollHandler();
+      this._scrollContainerElement.addEventListener('scroll', this._scrollHandler);
 
       if (!preventInputFocus) {
         this.input.focus();
@@ -546,6 +554,13 @@ class Choices {
     requestAnimationFrame(() => {
       this.dropdown.hide();
       this.containerOuter.close();
+
+      if (this._scrollHandler) {
+        this._scrollContainerElement.removeEventListener(
+          'scroll',
+          this._scrollHandler,
+        );
+      }
 
       if (!preventInputBlur && this._canSearch) {
         this.input.removeActiveDescendant();
@@ -1696,6 +1711,7 @@ class Choices {
 
   _onKeyUp(/* event: KeyboardEvent */): void {
     this._canSearch = this.config.searchEnabled;
+    this._setFlyoutPositionAndSize();
   }
 
   _onInput(/* event: InputEvent */): void {
@@ -2231,7 +2247,7 @@ class Choices {
   _createElements(): void {
     const templating = this._templates;
     const { config, _isSelectOneElement: isSelectOneElement } = this;
-    const { position, classNames } = config;
+    const { classNames } = config;
     const elementType = this._elementType;
 
     this.containerOuter = new Container({
@@ -2246,14 +2262,12 @@ class Choices {
       ),
       classNames,
       type: elementType,
-      position,
     });
 
     this.containerInner = new Container({
       element: templating.containerInner(config),
       classNames,
       type: elementType,
-      position,
     });
 
     this.input = new Input({
@@ -2405,6 +2419,125 @@ class Choices {
     } else if (!this.initialisedOK) {
       throw new TypeError(`${caller} called for an element which has multiple instances of Choices initialised on it`);
     }
+  }
+
+
+  _findScrollContainer(): void {
+    this._scrollContainerElement =
+      this.containerOuter.element.closest(
+        `:where(${this.config.scrollContainers.join(',')})`,
+      ) || document;
+  }
+
+  _setFlyoutPositionAndSize() {
+    const optimizedDropdownHeight = this.dropdown.element.style.height;
+
+    // get pristine height of dropdown
+    this.dropdown.element.style.height = 'auto';
+    this.choiceList.element.style.flexGrow = '0';
+    const pristineDropdownHeight = parseInt(
+      window.getComputedStyle(this.dropdown.element).height,
+      10,
+    );
+    this.choiceList.element.style.flexGrow = '1';
+
+    const containerOuterHeight = parseInt(
+      window.getComputedStyle(this.containerOuter.element).height,
+      10,
+    );
+
+    // get available space and subtract safeSpace
+    const space =
+      this._scrollContainerElement === document
+        ? this._getSpaceInViewport()
+        : this._getSpaceInScrollContainer();
+    const spaceAbove = space.above - this.config.dropdownMargin;
+    const spaceBelow = space.below - this.config.dropdownMargin;
+
+    // do nothing if containerOuter is not completely visible or dropdown is not truncated
+
+    const isDropdownContainerCompletelyInvisible =
+      space.above < containerOuterHeight * -1 || space.below < containerOuterHeight * -1;
+    const isFlyoutNotTruncated =
+      spaceAbove >= pristineDropdownHeight && spaceBelow >= pristineDropdownHeight;
+    if (isDropdownContainerCompletelyInvisible || isFlyoutNotTruncated) {
+      this.dropdown.element.style.height = optimizedDropdownHeight;
+      return;
+    }
+
+    const flippedState = Array.isArray(this.containerOuter.classNames.flippedState)
+      ? this.containerOuter.classNames.flippedState[0]
+      : this.containerOuter.classNames.flippedState;
+
+    // set classNames.flippedState and height
+    if (spaceAbove > spaceBelow) {
+      this.containerOuter.element.classList.add(flippedState);
+      this.dropdown.element.style.height = `${Math.min(
+        spaceAbove,
+        pristineDropdownHeight,
+        this.config.dropdownMaxHeight,
+      )}px`;
+    } else {
+      this.containerOuter.element.classList.remove(flippedState);
+      this.dropdown.element.style.height = `${Math.min(
+        spaceBelow,
+        pristineDropdownHeight,
+        this.config.dropdownMaxHeight,
+      )}px`;
+    }
+  }
+
+  // Calculate space between border box of innerNode and viewport.
+  _getSpaceInViewport() {
+    const { top: innerTopPosition, height: innerHeight } =
+      this.containerOuter.element.getBoundingClientRect();
+
+    return {
+      above: innerTopPosition,
+      below: window.innerHeight - (innerTopPosition + innerHeight),
+    };
+  }
+
+  // Calculate space between border box of innerNode and content box of outerNode.
+  _getSpaceInScrollContainer() {
+    const scrollContainerElement = this._scrollContainerElement as Element;
+
+    const {
+      borderTopWidth: outerBorderTopWidth,
+      borderBottomWidth: outerBorderBottomWidth,
+    } = window.getComputedStyle(scrollContainerElement);
+
+    const { top: outerTopPosition, height: outerHeight } =
+      scrollContainerElement.getBoundingClientRect();
+
+    const { top: innerTopPosition, height: innerHeight } =
+      this.containerOuter.element.getBoundingClientRect();
+
+    return {
+      above:
+        innerTopPosition - outerTopPosition - parseInt(outerBorderTopWidth, 10),
+      below:
+        outerTopPosition +
+        outerHeight -
+        parseInt(outerBorderBottomWidth, 10) -
+        innerTopPosition -
+        innerHeight,
+    };
+  }
+
+  _createThrottledScrollHandler() {
+    let ticking = false;
+
+    return () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          this._setFlyoutPositionAndSize();
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
   }
 }
 
