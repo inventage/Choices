@@ -287,7 +287,8 @@ $choices-placeholder-opacity: 0.5 !default;
   word-break: break-all;
 
   &.is-active {
-    display: block;
+    display: flex;
+    flex-direction: column;
   }
 
   .is-open & {
@@ -303,10 +304,10 @@ $choices-placeholder-opacity: 0.5 !default;
   }
   .#{$choices-selector}__list {
     position: relative;
-    max-height: 300px;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     will-change: scroll-position;
+    flex-grow: 1;
   }
   .#{$choices-selector}__item {
     position: relative;

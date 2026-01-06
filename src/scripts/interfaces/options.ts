@@ -1,7 +1,6 @@
 import { IFuseOptions } from 'fuse.js';
 import { InputChoice } from './input-choice';
 import { ClassNames } from './class-names';
-import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
 // eslint-disable-next-line import/no-cycle
 import { CallbackOnCreateTemplatesFn } from './templates';
@@ -358,15 +357,6 @@ export interface Options {
   searchFields: string[];
 
   /**
-   * Whether the dropdown should appear above `(top)` or below `(bottom)` the input. By default, if there is not enough space within the window the dropdown will appear above the input, otherwise below it.
-   *
-   * **Input types affected:** select-one, select-multiple
-   *
-   * @default 'auto'
-   */
-  position: PositionOptionsType;
-
-  /**
    * Whether the scroll position should reset after adding an item.
    *
    * **Input types affected:** select-multiple
@@ -634,4 +624,27 @@ export interface Options {
   callbackOnCreateTemplates: CallbackOnCreateTemplatesFn | null;
 
   appendGroupInSearch: boolean;
+
+  /**
+   * Whitespace between edges of dropdown and scroll region.
+   *
+   * @default 10
+   */
+  dropdownMargin: number;
+  /**
+   * Maximum height of dropdown.
+   *
+   * @note Maximum height gets automatically reduced if the list of choices is shorter or the available space in a scroll area is smaller.
+   *
+   * @default 300
+   */
+  dropdownMaxHeight: number;
+  /**
+   * A opened dropdown never overflows the closest scroll container.
+   *
+   * @note If no scroll container where found the viewport is used. The list of selectors are applied inside the CSS pseudo-class `:where()`.
+   *
+   * @default ['.scrollable-region']
+   */
+  scrollContainers: string[];
 }

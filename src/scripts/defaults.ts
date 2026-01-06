@@ -62,7 +62,6 @@ export const DEFAULT_CONFIG: Options = {
   searchFloor: 1,
   searchResultLimit: 4,
   searchFields: ['label', 'value'],
-  position: 'auto',
   resetScrollPosition: true,
   shouldSort: true,
   shouldSortItems: false,
@@ -95,4 +94,7 @@ export const DEFAULT_CONFIG: Options = {
   callbackOnCreateTemplates: null,
   classNames: DEFAULT_CLASSNAMES,
   appendGroupInSearch: false,
+  dropdownMargin: 10,
+  dropdownMaxHeight: 300,
+  scrollContainers: ['.scrollable-region'],
 } as const;
