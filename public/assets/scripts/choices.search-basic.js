@@ -3171,11 +3171,6 @@
                     _this.input.focus();
                 }
                 _this.passedElement.triggerEvent(EventType.showDropdown);
-                var activeElement = _this.choiceList.element.querySelector(getClassNamesSelector(_this.config.classNames.selectedState));
-                if (activeElement !== null && !isScrolledIntoView(activeElement, _this.choiceList.element)) {
-                    // We use the native scrollIntoView function instead of choiceList.scrollToChildElement to avoid animated scroll.
-                    activeElement.scrollIntoView();
-                }
             });
             return this;
         };
@@ -4781,9 +4776,9 @@
                 this.containerOuter.element.closest(":where(".concat(this.config.scrollContainers.join(','), ")")) || document;
         };
         Choices.prototype._setFlyoutPositionAndSize = function () {
-            var optimizedDropdownHeight = this.dropdown.element.style.height;
+            var optimizedDropdownHeight = this.dropdown.element.style.maxHeight;
             // get pristine height of dropdown
-            this.dropdown.element.style.height = 'auto';
+            this.dropdown.element.style.maxHeight = 'unset';
             this.choiceList.element.style.flexGrow = '0';
             var pristineDropdownHeight = parseInt(window.getComputedStyle(this.dropdown.element).height, 10);
             this.choiceList.element.style.flexGrow = '1';
@@ -4798,7 +4793,7 @@
             var isDropdownContainerCompletelyInvisible = space.above < containerOuterHeight * -1 || space.below < containerOuterHeight * -1;
             var isFlyoutNotTruncated = spaceAbove >= pristineDropdownHeight && spaceBelow >= pristineDropdownHeight;
             if (isDropdownContainerCompletelyInvisible || isFlyoutNotTruncated) {
-                this.dropdown.element.style.height = optimizedDropdownHeight;
+                this.dropdown.element.style.maxHeight = optimizedDropdownHeight;
                 return;
             }
             var flippedState = Array.isArray(this.containerOuter.classNames.flippedState)
@@ -4807,11 +4802,11 @@
             // set classNames.flippedState and height
             if (spaceAbove > spaceBelow) {
                 this.containerOuter.element.classList.add(flippedState);
-                this.dropdown.element.style.height = "".concat(Math.min(spaceAbove, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
+                this.dropdown.element.style.maxHeight = "".concat(Math.min(spaceAbove, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
             }
             else {
                 this.containerOuter.element.classList.remove(flippedState);
-                this.dropdown.element.style.height = "".concat(Math.min(spaceBelow, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
+                this.dropdown.element.style.maxHeight = "".concat(Math.min(spaceBelow, pristineDropdownHeight, this.config.dropdownMaxHeight), "px");
             }
         };
         // Calculate space between border box of innerNode and viewport.
